@@ -61,16 +61,6 @@ func LOGIN_RQ_COMPLETE(res) -> void:
         printerr("ERROR WHILE LOGGING IN TO ACCOUNT\n" + res)
         return
     
-    var timer = self.get_parent().get_parent().get_parent().get_node("token_expired")
-    timer.start()
-    
-    var dt = Tweaks.get_time_dict(OS.get_unix_time() + int(timer.time_left))
-    dt["hour"] = str(int(dt["hour"]) + dt["offset"])
-    var label = self.get_parent().get_node("scroll/content/margin/buttons/session_time")
-    var expt = "%s:%s.%s" % [dt["hour"], dt["minute"], dt["second"]]
-    label.text = "%s %s" % [tr("account_profile_session_time"), expt]
-    label.hint_tooltip = expt
-    
     User.token = res
     
     get_parent().update_data()

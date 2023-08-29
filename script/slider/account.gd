@@ -14,6 +14,18 @@ func user_logged_in() -> void:
     Notification.add_to_history("Logged in as " + User.username)
 
 func update_data() -> void:
+    var timer = self.get_parent().get_parent().get_node("token_expired")
+    timer.stop()
+    timer.start(0)
+    
+    var dt = Tweaks.get_time_dict(OS.get_unix_time() + int(timer.time_left))
+    dt["hour"] = str(int(dt["hour"]) + dt["offset"])
+    var label = $scroll/content/margin/buttons/session_time
+    var expt = "%s:%s.%s" % [dt["hour"], dt["minute"], dt["second"]]
+    label.text = "%s %s" % [tr("account_profile_session_time"), expt]
+    label.hint_tooltip = expt
+    
+    
     $login.hide()
     $scroll.hide()
     $logging_in_label.show()

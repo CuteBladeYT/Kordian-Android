@@ -39,11 +39,11 @@ func update_appearance() -> void:
     $navbar.margin_top = -navbar_height
     $content/input.margin_top = -navbar_height
     
-    $content/input/send.visible = s["appearance"]["show_message_send_button"] if Tweaks.IS_ANDROID else false
-    if $content/input/send.visible == true:
-        $content/input/msg.margin_right = -navbar_height + 3
-    else:
-        $content/input/msg.margin_right = 0
+    #$content/input/send.visible = s["appearance"]["show_message_send_button"] if Tweaks.IS_ANDROID else false
+    #if $content/input/send.visible == true:
+    #    $content/input/msg.margin_right = -navbar_height + 3
+    #else:
+    #    $content/input/msg.margin_right = 0
     
     $slider_panel/account/scroll/content/margin/buttons/session_time.text = "%s %s" % [tr("account_profile_session_time"), $slider_panel/account/scroll/content/margin/buttons/session_time.hint_tooltip]
 

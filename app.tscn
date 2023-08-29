@@ -891,6 +891,7 @@ align = 1
 valign = 2
 
 [node name="show_message_send_button" type="CheckButton" parent="slider_panel/settings/scroll/container"]
+visible = false
 margin_top = 648.0
 margin_right = 718.0
 margin_bottom = 728.0
@@ -899,6 +900,7 @@ text = "settings_show_message_send_button"
 align = 1
 
 [node name="blank4" type="Label" parent="slider_panel/settings/scroll/container"]
+visible = false
 margin_top = 736.0
 margin_right = 718.0
 margin_bottom = 768.0
@@ -1334,7 +1336,6 @@ custom_fonts/font = SubResource( 17 )
 autowrap = true
 
 [connection signal="pressed" from="header/menu" to="header" method="_on_menu_pressed"]
-[connection signal="text_entered" from="content/input/msg" to="content" method="SEND_MESSAGE"]
 [connection signal="pressed" from="content/input/send" to="content" method="SEND_MESSAGE"]
 [connection signal="pressed" from="slider_panel/roomcfg/scroll/container/connect" to="content" method="CONNECT_TO_ROOM"]
 [connection signal="pressed" from="slider_panel/settings/scroll/container/settings_save" to="slider_panel/settings" method="_on_settings_save_pressed"]
