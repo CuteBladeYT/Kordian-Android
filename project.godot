@@ -1,0 +1,124 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "InputEventAction",
+"class": "InputEventSwipe",
+"language": "GDScript",
+"path": "res://SwipeModule/InputEventSwipe.gd"
+}, {
+"base": "_SwipeEventCore",
+"class": "SwipeModule",
+"language": "GDScript",
+"path": "res://SwipeModule/SwipeModule.gd"
+}, {
+"base": "InputEventAction",
+"class": "ThrowedFooter",
+"language": "GDScript",
+"path": "res://SwipeModule/ThrowedFooter.gd"
+}, {
+"base": "InputEventAction",
+"class": "ThrowedHeader",
+"language": "GDScript",
+"path": "res://SwipeModule/ThrowedHeader.gd"
+}, {
+"base": "Node",
+"class": "_SwipeEventCore",
+"language": "GDScript",
+"path": "res://SwipeModule/_SwipeEventCore.gd"
+} ]
+_global_script_class_icons={
+"InputEventSwipe": "res://SwipeModule/SwipeEventCore.png",
+"SwipeModule": "",
+"ThrowedFooter": "res://SwipeModule/SwipeEventCore.png",
+"ThrowedHeader": "res://SwipeModule/SwipeEventCore.png",
+"_SwipeEventCore": "res://SwipeModule/SwipeEventCore.png"
+}
+
+[application]
+
+config/name="Kordian"
+config/description="Android client for Kordian chat app"
+run/main_scene="res://app.tscn"
+run/low_processor_mode=true
+boot_splash/image="res://assets/icn/icon-outline192.png"
+boot_splash/fullsize=false
+boot_splash/bg_color=Color( 0.0666667, 0.0666667, 0.105882, 1 )
+config/icon="res://assets/icn/icon.png"
+config/macos_native_icon="res://assets/icn/icon.icns"
+config/windows_native_icon="res://assets/icn/icon.ico"
+
+[audio]
+
+driver=""
+
+[autoload]
+
+Colors="*res://global/colors.gd"
+Tweaks="*res://global/tweaks.gd"
+Requests="*res://global/requests.gd"
+User="*res://global/user.gd"
+api="*res://global/api.gd"
+Notification="*res://global/notification.gd"
+Times="*res://global/time.gd"
+
+[display]
+
+window/size/width=750
+window/size/height=1334
+window/size/test_width=500
+window/size/test_height=889
+window/dpi/allow_hidpi=true
+window/tablet_driver=""
+window/handheld/orientation="portrait"
+window/ios/hide_home_indicator=false
+window/stretch/mode="2d"
+window/stretch/aspect="expand"
+
+[gui]
+
+common/drop_mouse_on_gui_input_disabled=true
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[locale]
+
+translations=PoolStringArray( "res://translations/translations.csv", "res://translations/translations.en.translation", "res://translations/translations.pl.translation" )
+
+[physics]
+
+common/physics_fps=1
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+quality/driver/driver_name="GLES2"
+quality/intended_usage/framebuffer_allocation=0
+quality/intended_usage/framebuffer_allocation.mobile=0
+vram_compression/import_etc=true
+vram_compression/import_etc2=false
+quality/directional_shadow/size=256
+quality/directional_shadow/size.mobile=256
+quality/shadow_atlas/size=256
+quality/shadow_atlas/size.mobile=256
+quality/shadow_atlas/cubemap_size=64
+quality/shadows/filter_mode=0
+quality/reflections/texture_array_reflections=false
+quality/reflections/high_quality_ggx=false
+quality/reflections/irradiance_max_size=32
+quality/shading/force_vertex_shading=true
+quality/shading/force_lambert_over_burley=true
+quality/shading/force_blinn_over_ggx=true
+quality/filters/anisotropic_filter_level=1
+quality/reflections/atlas_size=0
+quality/reflections/atlas_subdiv=0
+quality/depth/hdr=false
