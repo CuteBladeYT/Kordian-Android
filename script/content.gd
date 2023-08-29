@@ -38,10 +38,6 @@ func _process(delta: float) -> void:
         else:
             #self.rect_size.y = Tweaks.CHAT_DEF_HEIGHT
             self.margin_bottom = 0
-            
-        if self.visible == true:
-            if $input/msg.has_focus() == false:
-                $input/msg.grab_focus()
         
 func CONNECT_TO_ROOM() -> void:
     if User.email_verified == true:
@@ -103,11 +99,11 @@ func SEND_MESSAGE() -> void:
         $input/send.disabled = true
         api.callmap[api.API_MESSAGES_SEND_MESSAGE] = [self, "MESSAGE_SEND_RESPONSE"]
         api.ROOM_SEND_MESSAGE(User.token, ROOMID, msg)
+        $input/msg.text = ""
+        $input/msg.grab_focus()
         
 func MESSAGE_SEND_RESPONSE(res) -> void:
-    if res == "0":
-        $input/msg.text = ""
-    else:
+    if res != "0":
         printerr(res)
     $input/send.disabled = false
     return

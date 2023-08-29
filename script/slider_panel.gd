@@ -36,6 +36,7 @@ func slider_visibility(vis: bool) -> void:
             navbar.get_node("anim").play("hide")
             content.get_node("anim").play("show")
             content.update_ui()
+            content.get_node("input/msg").grab_focus()
 
 func _input(event) -> void:
     if event is InputEventSwipe:
