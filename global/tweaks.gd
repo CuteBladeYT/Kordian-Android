@@ -27,6 +27,7 @@ var settings = {
         "header_height": 128,
         "navbar_height": 128,
         "keyboard_shrink": 0,
+        "keyboard_shrink_scale": 1,
         "show_message_send_button": true
     },
     "app": {

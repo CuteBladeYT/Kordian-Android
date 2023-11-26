@@ -36,6 +36,7 @@ func _process(delta: float) -> void:
             var size = -ks# + v_keyboard_height
             
             self.rect_size.y = int(Tweaks.CHAT_DEF_HEIGHT - (v_keyboard_height * scale))
+            #self.rect_size.y = api.APP.rect_size.y - (size)
             self.margin_bottom = size
             
         else:

@@ -16,6 +16,7 @@ func _ready() -> void:
     
     $scroll/container/keyboard_shrink_value.editable = Tweaks.IS_ANDROID
     $scroll/container/keyboard_shrink_value.value = s["appearance"]["keyboard_shrink"]
+    $scroll/container/keyboard_shrink_scale_value.value = s["appearance"]["keyboard_shrink_scale"]
     
     $scroll/container/show_message_send_button.disabled = !Tweaks.IS_ANDROID
     $scroll/container/show_message_send_button.pressed = s["appearance"]["show_message_send_button"]
@@ -38,6 +39,7 @@ func _on_settings_save_pressed() -> void:
     s["appearance"]["header_height"] = $scroll/container/header_height_value.value
     s["appearance"]["navbar_height"] = $scroll/container/navbar_height_value.value
     s["appearance"]["keyboard_shrink"] = $scroll/container/keyboard_shrink_value.value
+    s["appearance"]["keyboard_shrink_scale"] = $scroll/container/keyboard_shrink_scale_value.value
     s["appearance"]["show_message_send_button"] = $scroll/container/show_message_send_button.pressed
     s["app"]["language"] = $scroll/container/app_language.get_item_text($scroll/container/app_language.selected)
     s["app"]["auto_login"] = $scroll/container/app_auto_login.pressed
@@ -63,9 +65,8 @@ func update_slider_text_value(value: float, item: String, suffix := "") -> void:
         
         n.text = tr(n.hint_tooltip) + " - " + str(value) + suffix
         
-        if n.name == $scroll/container/ui_scale.name:
-            $scroll/container/keyboard_shrink_value.max_value = OS.window_size.y * value
-
+        if api.APP:
+            $scroll/container/keyboard_shrink_value.max_value = api.APP.rect_size.y / $scroll/container/keyboard_shrink_scale_value.value
 
 func _theme_file_selected(path: String) -> void:
     pass # Replace with function body.
