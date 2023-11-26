@@ -1,6 +1,7 @@
 extends Control
 
 func _ready() -> void:
+    api.LOGIN_BUTTON = $login/form/login
     $login.show()
     $scroll.hide()
     $logging_in_label.hide()

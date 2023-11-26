@@ -29,6 +29,8 @@ func _ready() -> void:
     $scroll/container/app_auto_login.pressed = s["app"]["auto_login"]
     api.autologin = s["app"]["auto_login"]
 
+    _on_settings_save_pressed()
+
 func _on_settings_save_pressed() -> void:
     var s = Tweaks.settings
     s["appearance"]["ui_scale"] = $scroll/container/ui_scale_value.value

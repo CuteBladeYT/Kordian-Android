@@ -75,10 +75,8 @@ window/size/width=750
 window/size/height=1334
 window/size/test_width=500
 window/size/test_height=889
-window/dpi/allow_hidpi=true
 window/tablet_driver=""
 window/handheld/orientation="portrait"
-window/ios/hide_home_indicator=false
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
 
@@ -92,7 +90,11 @@ pointing/emulate_touch_from_mouse=true
 
 [locale]
 
-translations=PoolStringArray( "res://translations/translations.csv", "res://translations/translations.en.translation", "res://translations/translations.pl.translation" )
+translations=PoolStringArray( "res://translations/translations.en.translation", "res://translations/translations.pl.translation" )
+
+[mono]
+
+project/assembly_name="Kordian"
 
 [physics]
 

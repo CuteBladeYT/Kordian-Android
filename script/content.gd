@@ -13,6 +13,8 @@ onready var slider_panel: Control = self.get_parent().get_node("slider_panel")
 
 var MSG_N_CALL: Array = []
 
+onready var MESSAGE_ITEM = $messages/EXAMPLE_MSG
+
 func _ready() -> void:
     api.callmap[api.API_ACCOUNTS_GET_INFO] = [self, "UPDATE_MESSAGE_SENDER_NAME"]
     api.messages = self
@@ -32,12 +34,38 @@ func _process(delta: float) -> void:
             #var size = -int((v_keyboard_height / scale) + (hh / scale) - 16)
             var size = -ks# + v_keyboard_height
             
-            #self.rect_size.y = int(Tweaks.CHAT_DEF_HEIGHT - (v_keyboard_height * scale))
+            self.rect_size.y = int(Tweaks.CHAT_DEF_HEIGHT - (v_keyboard_height * scale))
             self.margin_bottom = size
             
         else:
             #self.rect_size.y = Tweaks.CHAT_DEF_HEIGHT
             self.margin_bottom = 0
+    
+    $messages/scroll.margin_bottom = 0
+    self.margin_top = 0
+    
+    update_loop()
+    
+func update_loop() -> void:
+    while true:
+        update_ui()
+        
+        yield(get_tree().create_timer(1),"timeout")
+
+func update_input_height() -> void:
+    var header_height = Tweaks.settings["appearance"]["header_height"]   
+    var navbar_height = Tweaks.settings["appearance"]["navbar_height"]
+    if $input/msg.get_line_count() > 1:
+        var msg = $input/msg
+        var lc = msg.get_line_count()
+        var lh = msg.get_line_height()
+        var lines_height = lc*lh
+        var rect_height = self.rect_size.y-header_height
+        $input.margin_top = -navbar_height - (lh*4)
+        if $input.rect_size.y > rect_height:
+            $input.rect_size.y = rect_height
+    else:   
+        $input.margin_top = -navbar_height
         
 func CONNECT_TO_ROOM() -> void:
     if User.email_verified == true:
@@ -54,11 +82,13 @@ func ROOM_CONNECT_RESPONSE(res: String) -> void:
         api.callmap[api.API_MESSAGES_FETCH_MESSAGES] = [self, "APPEND_FETCH_MESSAGES", true] # idx:2 is a "clear" parameter
         api.FETCH_ROOM_MESSAGES(ROOMID, 100)
         slider_panel.slider_visibility(false)
+        self.get_parent().get_node("header/roomid").text = str(ROOMID)
     else:
         if res.begins_with("ERR:: Email unverified"):
             Notification.add_notif(tr("rooms_error_unverified_email"))
         CONNECTED = false
         ROOMID = -1
+        self.get_parent().get_node("header/roomid").text = ""
         Notification.add_notif(res, Colors.theme["colors"]["disabled"])
     return
 
@@ -68,7 +98,7 @@ func APPEND_FETCH_MESSAGES(messages, clear: bool = false) -> void:
         return
     
     if clear == true:
-        for msg in $messages/scroll/list.get_children():
+        for msg in $messages/scroll/container.get_children():
             msg.queue_free()
     
     if messages is Dictionary:
@@ -109,69 +139,91 @@ func MESSAGE_SEND_RESPONSE(res) -> void:
     return
 
 func _CREATE_MESSAGE_NODE(content: String, sender_uid: String, timestamp: String) -> void:
-    
     var datetime = Tweaks.get_time_dict(int(timestamp))
     
-    var msg = $messages/msg.duplicate()
+    var msg = MESSAGE_ITEM.duplicate()
     
     msg.name = str(timestamp.replace(".","_"))
-    var con = msg.get_node("vbox/content")
-    var date = msg.get_node("vbox/sender/hbox/timestamp/date")
-    var time = msg.get_node("vbox/sender/hbox/timestamp/time")
-    var sendername = msg.get_node("vbox/sender/hbox/sendername")
-    var senderpic = msg.get_node("vbox/sender/senderpic")
-    var senderuid = msg.get_node("vbox/sender/uid")
+    var con = msg.get_node("margin/bubble/content")
+    var date = msg.get_node("margin/bubble/date")
+    var sender = msg.get_node("margin/bubble/author")
+    var senderpic = msg.get_node("margin/bubble/pfp")
     
-    con.text = content
-    date.text = "%s.%s.%s" % [datetime["day"], datetime["month"], datetime["year"]]
-    time.text = "%s:%s:%s" % [datetime["hour"] + datetime["offset"], datetime["minute"], datetime["second"]]
-    senderuid.text = sender_uid
+    msg.ALIGNMENT = "Left"
+    msg.ARROW = "Left"
+    if sender_uid == User.uid:
+        msg.ALIGNMENT = "Right"
+        msg.ARROW = "Right"
     
-    var stackmsg: bool = false
+    msg.MESSAGE = content
+    #con.text = content
+    var datestr = "%s.%s.%s %s:%s:%s" % [datetime["day"], datetime["month"], datetime["year"], str(int(datetime["hour"]) + int(datetime["offset"])), datetime["minute"], datetime["second"]]
+    msg.DATETIME = datestr
+    #date.text = datestr
+    #time.text = "%s:%s:%s" % [datetime["hour"] + datetime["offset"], datetime["minute"], datetime["second"]]
+    #senderuid.text = sender_uid
     
-    if $messages/scroll/list.get_child_count() > 0:
-        var lastmsg: Control = $messages/scroll/list.get_child($messages/scroll/list.get_child_count()-2)
-        if lastmsg.get_node("vbox/sender/uid").text == sender_uid:
-            stackmsg = true
-            msg.get_node("vbox/sender").hide()
+    #var stackmsg: bool = false
     
-    if stackmsg == false:
-        if cache.has_section_key("users", sender_uid) == true:
-            var usrdata = cache.get_value("users", sender_uid)
-            sendername.text = usrdata["username"]
-            
-            var pic = api.LOAD_TEXTURE_FROM_IMAGE(usrdata["picture"])
-            if pic:
-                senderpic.texture = pic
-        else:
-            MSG_N_CALL.append(msg.name)
+    #if $messages/scroll/list.get_child_count() > 0:
+    #    var lastmsg: Control = $messages/scroll/list.get_child($messages/scroll/list.get_child_count()-2)
+    #    if lastmsg.get_node("vbox/sender/uid").text == sender_uid:
+    #        stackmsg = true
+    #        msg.get_node("vbox/sender").hide()
+    
+    #if stackmsg == false:
+    if cache.has_section_key("users", sender_uid) == true:
+        var usrdata = cache.get_value("users", sender_uid)
+        msg.HEADER = usrdata["username"]
+        #sender.text = "%s | %s" % [usrdata["username"], sender_uid]
         
-            api.callmap[api.API_ACCOUNTS_GET_INFO] = [self, "UPDATE_MESSAGE_SENDER_NAME"]
-            api.GET_ACCOUNT_DATA(sender_uid)
+        var pic = api.LOAD_TEXTURE_FROM_IMAGE(usrdata["picture"])
+        if pic:
+            #senderpic.texture = pic
+            msg.PROFILE_PICTURE = pic
+    else:
+        MSG_N_CALL.append(msg.name)
+    
+        api.callmap[api.API_ACCOUNTS_GET_INFO] = [self, "UPDATE_MESSAGE_SENDER_NAME"]
+        api.GET_ACCOUNT_DATA(sender_uid)
     
     msg.visible = true
     
-    var sep = HSeparator.new()
+    $messages/scroll/container.add_child(msg)
     
-    $messages/scroll/list.add_child(msg)
-    $messages/scroll/list.add_child(sep)
+    yield(get_tree().create_timer(.1),"timeout")
+    
+    $messages/scroll.scroll_vertical = $messages/scroll/container.rect_size.y
+    
+    #var sep = HSeparator.new()
+    
+    #$messages/scroll/list.add_child(msg)
+    #$messages/scroll/list.add_child(sep)
     
     #if stackmsg == true:
     #    sep.hide()
     
-    init_sep_timer(msg, sep, stackmsg)
+    #init_sep_timer(msg, sep, stackmsg)
 
 func update_ui() -> void:
-    for ei in $messages/scroll/list.get_child_count():
-        var e = $messages/scroll/list.get_child(ei)
-        if e is Control:
-            var sep = $messages/scroll/list.get_child(ei+1)
-            #print(e, sep)
-            if sep and e:
-                var stacked: bool = false
-                if e.get_child_count() > 0:
-                    stacked = !e.get_node("vbox/sender").visible
-                init_sep_timer(e, sep, stacked)
+    var container = $messages/scroll/container
+    var cy: int = 0
+    for ei in container.get_child_count():
+        var e: Control = container.get_child(ei)
+        var sy: int = e.rect_size.y
+        e.rect_position.y = cy
+        cy = cy + sy
+    container.rect_min_size.y = cy
+    #for ei in $messages/scroll/list.get_child_count():
+    #    var e = $messages/scroll/list.get_child(ei)
+    #    if e is Control:
+    #        var sep = $messages/scroll/list.get_child(ei+1)
+    #        #print(e, sep)
+    #        if sep and e:
+    #            var stacked: bool = false
+    #            if e.get_child_count() > 0:
+    #                stacked = !e.get_node("vbox/sender").visible
+    #            init_sep_timer(e, sep, stacked)
 
 func init_sep_timer(msg: Control, sep: HSeparator, stack: bool) -> void:
     var timer = Timer.new()
@@ -226,8 +278,9 @@ func msg_timer(timer: Timer, msg: Control, sep: HSeparator, stack: bool) -> void
 func UPDATE_MESSAGE_SENDER_PFP(texture: ImageTexture, kwargs: Array) -> void:
     # kwargs[0] is always UID
     var msgt: String = kwargs[1].replace(".","")
-    var msg = $messages/scroll/list.get_node(msgt)
-    msg.get_node("vbox/sender/senderpic").texture = texture
+    var msg = $messages/scroll/container.get_node(msgt)
+    msg.PROFILE_PICTURE = texture
+    #msg.get_node("margin/bubble/pfp").texture = texture
     
     var suid: String = kwargs[0]
     if cache.has_section_key("users", suid) == true:
@@ -238,10 +291,12 @@ func UPDATE_MESSAGE_SENDER_PFP(texture: ImageTexture, kwargs: Array) -> void:
 func UPDATE_MESSAGE_SENDER_NAME(data: Dictionary) -> void:
     var msgt: String = MSG_N_CALL[0]
     var sname: String = data["username"]
-    var msgn = $messages/scroll/list.get_node(msgt)
-    msgn.get_node("vbox/sender/hbox/sendername").text = sname
-    
     var suid = data["uid"]
+    
+    var msgn = $messages/scroll/container.get_node(msgt)
+    msgn.HEADER = sname
+    #msgn.get_node("margin/bubble/author").text = "%s | %s" % [sname, suid]
+    
     if cache.has_section_key("users", suid) == false:
         cache.set_value("users", suid, {
             "username": sname,

@@ -1,0 +1,121 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://script/message.gd" type="Script" id=1]
+[ext_resource path="res://theme/corner_radius.tres" type="Material" id=2]
+[ext_resource path="res://assets/icons/chat_bubble_arrow_left.png" type="Texture" id=3]
+[ext_resource path="res://assets/icons/chat_bubble_arrow_right.png" type="Texture" id=4]
+[ext_resource path="res://assets/icn/icon192.png" type="Texture" id=5]
+[ext_resource path="res://assets/icn/icon.png" type="Texture" id=6]
+
+[sub_resource type="StyleBoxTexture" id=41]
+texture = ExtResource( 3 )
+region_rect = Rect2( 0, 0, 768, 768 )
+modulate_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="StyleBoxTexture" id=40]
+texture = ExtResource( 4 )
+region_rect = Rect2( 0, 0, 768, 768 )
+modulate_color = Color( 0.454902, 0.780392, 0.92549, 1 )
+
+[sub_resource type="StyleBoxFlat" id=42]
+bg_color = Color( 0.454902, 0.780392, 0.92549, 1 )
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+
+[node name="message" type="Control"]
+anchor_right = 1.0
+margin_bottom = 116.0
+rect_min_size = Vector2( 400, 93 )
+mouse_filter = 2
+script = ExtResource( 1 )
+ARROW = "Right"
+ALIGNMENT = " Right"
+PROFILE_PICTURE = ExtResource( 6 )
+HEADER = "Kordian"
+MESSAGE = "a
+sad
+as
+dsa
+d
+sa
+d
+as
+d
+as
+d
+as
+
+"
+DATETIME = "24.11.2023 22:26"
+
+[node name="margin" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -8.0
+
+[node name="arrow_left" type="Panel" parent="margin"]
+visible = false
+margin_right = 64.0
+margin_bottom = 64.0
+custom_styles/panel = SubResource( 41 )
+
+[node name="arrow_right" type="Panel" parent="margin"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -64.0
+margin_bottom = 64.0
+custom_styles/panel = SubResource( 40 )
+
+[node name="bubble" type="Panel" parent="margin"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 32.0
+margin_right = -32.0
+custom_styles/panel = SubResource( 42 )
+
+[node name="pfp" type="TextureRect" parent="margin/bubble"]
+material = ExtResource( 2 )
+margin_left = 16.0
+margin_top = 8.0
+margin_right = 48.0
+margin_bottom = 32.0
+texture = ExtResource( 5 )
+expand = true
+stretch_mode = 6
+
+[node name="author" type="Label" parent="margin/bubble"]
+anchor_right = 1.0
+margin_left = 56.0
+margin_top = 8.0
+margin_right = -16.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0.0666667, 0.0666667, 0.105882, 1 )
+text = "Kordian"
+
+[node name="content" type="Label" parent="margin/bubble"]
+anchor_right = 1.0
+margin_left = 16.0
+margin_top = 32.0
+margin_right = -16.0
+margin_bottom = 32.0
+custom_colors/font_color = Color( 0.0666667, 0.0666667, 0.105882, 1 )
+autowrap = true
+
+[node name="date" type="Label" parent="margin/bubble"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = -24.0
+margin_right = -16.0
+margin_bottom = -8.0
+custom_colors/font_color = Color( 0.117647, 0.117647, 0.180392, 1 )
+text = "24.11.2023 22:26"
+align = 2
+valign = 2
+autowrap = true

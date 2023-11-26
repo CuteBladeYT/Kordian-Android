@@ -1,6 +1,7 @@
 extends Control
 
 func _ready() -> void:
+    api.APP = self
     api.reconTimeout = self.get_node("api_reconnect")
     api.reconTimeout.connect("timeout", api, "api_reconnect")
     api.REQS = self.get_node("requests")
@@ -37,7 +38,6 @@ func update_appearance() -> void:
     $content/messages.margin_top = header_height
     $content/messages.margin_bottom = -navbar_height
     $navbar.margin_top = -navbar_height
-    $content/input.margin_top = -navbar_height
     
     #$content/input/send.visible = s["appearance"]["show_message_send_button"] if Tweaks.IS_ANDROID else false
     #if $content/input/send.visible == true:

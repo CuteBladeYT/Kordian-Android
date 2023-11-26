@@ -3,6 +3,10 @@ extends Node
 #const SERVER_URL = "https://kordianapi.unitedcatdom.repl.co"
 const WS_URL = "wss://kordianapi.unitedcatdom.repl.co/"
 
+var APP: Control
+
+var LOGIN_BUTTON: Button
+
 var ws = WebSocketClient.new()
 
 var REQS: Node
@@ -26,6 +30,7 @@ const API_ACCOUNTS_DELETE = API_ACCOUNTS + "delete"
 const API_ACCOUNTS_VERIFY_EMAIL = API_ACCOUNTS + "verify_email"
 const API_ACCOUNTS_GET_INFO = API_ACCOUNTS + "get_account_data"
 const API_ACCOUNTS_GET_UID = API_ACCOUNTS + "fetch_uid"
+const API_ACCOUNTS_RESET_PASSWORD = API_ACCOUNTS + "reset_password"
 
 const API_ACCOUNTS_UPDATE = API_ACCOUNTS + "update/"
 const API_ACCOUNTS_UPDATE_USERNAME = API_ACCOUNTS_UPDATE + "username"
@@ -140,7 +145,10 @@ func ws_data() -> void:
     if data is String: 
         if data.begins_with("ERR::"):
             callable = false
-            printerr("Error loading data, %s" % [data])
+            printerr("Error loading data @ %s, %s" % [rtype, data])
+            Notification.add_notif(data, Colors.theme["colors"]["disabled"])
+            if rtype == "account/login":
+                LOGIN_BUTTON.disabled = false
             return
             
     elif data is Dictionary:
