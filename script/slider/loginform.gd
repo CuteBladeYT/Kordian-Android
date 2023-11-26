@@ -6,6 +6,7 @@ var creddatapath = Tweaks.PATHS+ "0/lastlogin.ini"
 
 func _ready() -> void:
     api.loginform = self
+    _on_register_toggled(false)
     var cred = load_login_data()
     if cred is Dictionary:
         var email = cred["email"]
@@ -118,12 +119,26 @@ func load_login_data():
 
 
 func _on_register_toggled(isRegister: bool) -> void:
-    var msg: String
+    var msg = [tr("account_login_btn_login"), tr("account_login_btn_register")]
+    var prin = $form/password_repeat
     if isRegister == true:
-        msg = tr("account_login_btn_register")
-        $form/password_repeat.show()
+        prin.modulate = Color.white
+        prin.mouse_filter = Control.MOUSE_FILTER_STOP
     else:
-        msg = tr("account_login_btn_login")
-        $form/password_repeat.hide()
-    $form/register.text = msg
-    $form/login.text = msg
+        prin.modulate = Color.transparent
+        prin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    #$form/register.text = msg[0] if isRegister else msg[1]
+    $form/login.text = msg[1] if isRegister else msg[0]
+
+
+func reset_password() -> void:
+    var email = $form/email.text
+    api.RESET_PASSWORD(email)
+    
+    $form/login.disabled = true
+    $form/reset_password.disabled = true
+
+
+func _on_show_password_toggled(button_pressed: bool) -> void:
+    $form/password.secret = !button_pressed
+    $form/password_repeat.secret = !button_pressed

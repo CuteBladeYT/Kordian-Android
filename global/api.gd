@@ -6,6 +6,7 @@ const WS_URL = "wss://kordianapi.unitedcatdom.repl.co/"
 var APP: Control
 
 var LOGIN_BUTTON: Button
+var RESET_PASSWORD_BUTTON: Button
 
 var ws = WebSocketClient.new()
 
@@ -147,8 +148,13 @@ func ws_data() -> void:
             callable = false
             printerr("Error loading data @ %s, %s" % [rtype, data])
             Notification.add_notif(data, Colors.theme["colors"]["disabled"])
-            if rtype == "account/login":
+            
+            if rtype == API_ACCOUNTS_LOGIN:
                 LOGIN_BUTTON.disabled = false
+            elif rtype == API_ACCOUNTS_RESET_PASSWORD:
+                LOGIN_BUTTON.disabled = false
+                yield(get_tree().create_timer(60),"timeout")
+                RESET_PASSWORD_BUTTON.disabled = true
             return
             
     elif data is Dictionary:
@@ -171,15 +177,16 @@ func ws_data() -> void:
                 })
     
     if callable == true:
-        var call = callmap[rtype]
-        var arg = null
-        if call.size() > 2:
-            arg = call[2]
-        
-        if arg:
-            call[0].call(call[1], data, arg)
-        else:
-            call[0].call(call[1], data)
+        if callmap.has(rtype):
+            var call = callmap[rtype]
+            var arg = null
+            if call.size() > 2:
+                arg = call[2]
+            
+            if arg:
+                call[0].call(call[1], data, arg)
+            else:
+                call[0].call(call[1], data)
 
 # ===========================
 # REMOVE UNUSED REQUEST NODE
@@ -290,6 +297,15 @@ func LOAD_TEXTURE_FROM_IMAGE(path: String):
     var texture = ImageTexture.new()
     texture.create_from_image(image, 0)
     return texture
+    
+# RESET PASSWORD
+func RESET_PASSWORD(email: String) -> void:
+    var data = CreateSendDict()
+    data["request"] = API_ACCOUNTS_RESET_PASSWORD
+    data["email"] = email
+    data = stringify(data)
+    var err = SEND(data)
+    return
 
 # UPDATE USER NAME
 func UPDATE_USER_NAME(token: String, username: String) -> void:
@@ -345,12 +361,13 @@ func FETCH_ROOM_MESSAGES(room_id: int, limit: int) -> void:
     return
 
 # SEND MESSAGE
-func ROOM_SEND_MESSAGE(token: String, room_id: int, content: String) -> void:
+func ROOM_SEND_MESSAGE(token: String, room_id: int, private: bool, content: String) -> void:
     if content.length() > 0:
         var data = CreateSendDict()
         data["request"] = API_MESSAGES_SEND_MESSAGE
         data["token"] = token
         data["room"] = room_id
+        data["private"] = private
         data["content"] = content.percent_encode()
         data = stringify(data)
         var err = SEND(data)

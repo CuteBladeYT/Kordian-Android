@@ -32,8 +32,15 @@ func add_to_history(text: String, color = Colors.theme["colors"]["text"]) -> voi
     t.text = "\n" + time
     n.autowrap = true
     
+    t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    n.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    
     history.add_child(t)
     history.add_child(n)
+    
+    yield(get_tree().create_timer(.1),"timeout")
+    var s: ScrollContainer = history.get_parent()
+    s.scroll_vertical = history.rect_size.y
     return
 
 func remove_notif(notif: Label) -> void:

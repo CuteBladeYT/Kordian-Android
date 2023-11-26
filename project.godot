@@ -90,7 +90,7 @@ pointing/emulate_touch_from_mouse=true
 
 [locale]
 
-translations=PoolStringArray( "res://translations/translations.en.translation", "res://translations/translations.pl.translation" )
+translations=PoolStringArray( "res://translations/translations.csv", "res://translations/translations.en.translation", "res://translations/translations.pl.translation" )
 
 [mono]
 

@@ -1,6 +1,5 @@
 extends Node
 
-
 var IS_ANDROID = OS.get_name().to_lower() == "Android".to_lower()
 
 var PATHS = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS).replace("Documents", "") + "Android/data/com.ampstudio.kordian/files/" if IS_ANDROID == true else "user://"
@@ -8,6 +7,10 @@ var PATHS = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS).replace("Documents", "") 
 var SETTINGS_FILE_PATH = PATHS+ "settings.ini"
 
 var CHAT_DEF_HEIGHT: int
+
+var FIRST_RUN = true
+
+var RNG := RandomNumberGenerator.new()
 
 func _ready() -> void:
     var dir = Directory.new()
@@ -28,7 +31,8 @@ var settings = {
     },
     "app": {
         "language": "en",
-        "auto_login": true
+        "auto_login": true,
+        "last_room_id": 0
     }
 }
 
@@ -44,6 +48,7 @@ func load_settings():
     var err = cfg.load(SETTINGS_FILE_PATH)
     if err:
         if err == 7:
+            FIRST_RUN = true
             printerr("Settings file doesn't exist")
         return err
     for section in cfg.get_sections():

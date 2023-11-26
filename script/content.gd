@@ -4,6 +4,7 @@ var cache := ConfigFile.new()
 var CACHE_PATH: String = Tweaks.PATHS+ "cache.ini"
 
 var ROOMID: int = -1
+var PRIVATE: bool = false
 var CONNECTED: bool = false
 
 const MESSAGE_HEIGHT = 144
@@ -69,6 +70,7 @@ func update_input_height() -> void:
         
 func CONNECT_TO_ROOM() -> void:
     if User.email_verified == true:
+        PRIVATE = get_parent().get_node("slider_panel/roomcfg/scroll/container/private").pressed
         ROOMID = get_parent().get_node("slider_panel/roomcfg/scroll/container/roomid").value
         api.callmap[api.API_MESSAGES_CONNECT_ROOM] = [self, "ROOM_CONNECT_RESPONSE"]
         api.CONNECT_TO_ROOM(User.token, ROOMID)
@@ -77,12 +79,19 @@ func CONNECT_TO_ROOM() -> void:
 
 func ROOM_CONNECT_RESPONSE(res: String) -> void:
     if int(res) == 0:
-        Notification.add_notif("%s %s" % [tr("rooms_connected_notif"), str(ROOMID)], Colors.theme["colors"]["activated"])
+        var notif_color = "hover" if PRIVATE else "activated"
+        Notification.add_notif("%s %s" % [tr("rooms_connected_notif"), str(ROOMID)], Colors.theme["colors"][notif_color])
         CONNECTED = true
         api.callmap[api.API_MESSAGES_FETCH_MESSAGES] = [self, "APPEND_FETCH_MESSAGES", true] # idx:2 is a "clear" parameter
         api.FETCH_ROOM_MESSAGES(ROOMID, 100)
         slider_panel.slider_visibility(false)
+    
         self.get_parent().get_node("header/roomid").text = str(ROOMID)
+        var color = "hover" if PRIVATE else "text"
+        self.get_parent().get_node("header/roomid").add_color_override("font_color", Colors.theme["colors"][color])
+    
+        Tweaks.settings["app"]["last_room_id"] = ROOMID
+        Tweaks.save_settings()
     else:
         if res.begins_with("ERR:: Email unverified"):
             Notification.add_notif(tr("rooms_error_unverified_email"))
@@ -128,7 +137,7 @@ func SEND_MESSAGE() -> void:
         var msg = $input/msg.text
         $input/send.disabled = true
         api.callmap[api.API_MESSAGES_SEND_MESSAGE] = [self, "MESSAGE_SEND_RESPONSE"]
-        api.ROOM_SEND_MESSAGE(User.token, ROOMID, msg)
+        api.ROOM_SEND_MESSAGE(User.token, ROOMID, PRIVATE, msg)
         $input/msg.text = ""
         $input/msg.grab_focus()
         

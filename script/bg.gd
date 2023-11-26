@@ -9,18 +9,19 @@ func _ready() -> void:
     $color.modulate = Colors.theme["colors"]["background"]
     
     if Colors.theme["background"]["image"] != "":
-        var img = ""
-        var extensions = ["png","jpg","jpeg","webp"]
-        var tries := 0
-        for ext in extensions:
-            img = __GET_THEME_BACKGROUND("","","","",ext)
-            if img is int or img == null:
-                if tries > extensions.size()-1:
-                    get_theme_image()
-            else:
-                $image.texture = img
-                break
-            tries += 1
+        get_theme_image()
+        #var img = ""
+        #var extensions = ["png","jpg","jpeg","webp"]
+        #var tries := 0
+        #for ext in extensions:
+        #    img = __GET_THEME_BACKGROUND("","","","",ext)
+        #    if img is int or img == null:
+        #        if tries > extensions.size()-1:
+        #            get_theme_image()
+        #    else:
+        #        $image.texture = img
+        #        break
+        #    tries += 1
     
     if Colors.theme["background"]["alpha"] < 1:
         $color.modulate = Color.black
@@ -29,6 +30,12 @@ func _ready() -> void:
 
 func get_theme_image() -> void:
     var url = Colors.theme["background"]["image"]
+    var img = Image.new()
+    img.load(url)
+    var txt = ImageTexture.new()
+    txt.create_from_image(img)
+    $image.texture = txt
+    return
     if url != "":
         var image_ext = url.split(".")[url.split(".").size()-1]
         GET_THEME_RQ = Requests.create_http_request(url)

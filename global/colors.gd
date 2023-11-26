@@ -33,7 +33,7 @@ var theme = {
 func _ready() -> void:
     load_theme()
     
-func load_theme():
+func load_theme() -> int:
     var err = cfg.load(THEME_FILE)
     if err != OK:
         return err 
@@ -44,3 +44,17 @@ func load_theme():
             if section == "colors":
                 value = Color(value)
             theme[section][key] = value
+    
+    return err
+
+func save_theme() -> int:
+    cfg.clear()
+    
+    for section in theme.keys():
+        for key in theme[section].keys():
+            var value = theme[section][key]
+            
+            cfg.set_value(section, key, value)
+    
+    var err = cfg.save(THEME_FILE)
+    return err

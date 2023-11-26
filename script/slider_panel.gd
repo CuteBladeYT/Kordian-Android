@@ -3,10 +3,18 @@ extends Control
 onready var navbar: Control = get_parent().get_node("navbar")
 onready var content: Control = get_parent().get_node("content")
 
+export(bool) var SWIPE_ENABLED = true setget CAN_SWIPE_UPDATE
+
 func _ready() -> void:
-    $SwipeModule.Activate()
+    CAN_SWIPE_UPDATE(true)
     slider_visibility(true)
     slider_set_screen("account")
+
+func CAN_SWIPE_UPDATE(enabled: bool) -> void:
+    if enabled:
+        $SwipeModule.Activate()
+    else:
+        $SwipeModule.Deactivate()
 
 func slider_set_screen(screen: String) -> void:
     var screens = [$roomcfg, $settings, $notifs, $account]

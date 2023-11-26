@@ -1,7 +1,8 @@
 extends Control
 
-func _ready() -> void:
+func _ready() -> void:   
     var sload_err = Tweaks.load_settings()
+    
     #if typeof(sload_err) is int:
     Tweaks.save_settings()
     
@@ -47,6 +48,13 @@ func _on_settings_save_pressed() -> void:
     get_parent().get_parent().update_appearance()
     
     Tweaks.CHAT_DEF_HEIGHT = self.get_parent().get_parent().get_node("content").rect_size.y
+
+    for c in $scroll/container.get_children():
+        if c is Label:
+            if c.hint_tooltip.length() > 0:
+                if c.text.find(" - ") > 0:
+                    var val = c.text.split(" - ")[1]
+                    c.text = "%s - %s" % [tr(c.hint_tooltip), val]
 
 func update_slider_text_value(value: float, item: String, suffix := "") -> void:
     var container = self.get_node("scroll/container")
